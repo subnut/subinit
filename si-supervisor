@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+"""
+The actual program that supervises all si-service processes.
+Runs as PID 1 when using si as init system.
+
+s6-svscan equivalent
+"""

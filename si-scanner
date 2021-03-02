@@ -1,0 +1,35 @@
+#!/usr/bin/python3
+
+"""
+A worker. To be invoked by `si-scan` only.
+Accepts only a single argument, and chdir's into that argument
+If invalid, exits with SIGTERM.
+
+If .si-scan value is greater than SI_SCAN_START,
+i.e. This directory has been scanned _after_ this scanning was started,
+then exit cleanly (i.e. with exit code 0)
+
+exec() into `si-service` as-soon-as it finds a .si-service
+file in the current directory.
+"""
+
+import os
+import sys
+
+SCAN_START = int(os.environ["SI_SCAN_START"])
+
+try:
+    os.chdir(sys.argv[1])
+except (FileNotFoundError, NotADirectoryError):
+    # Yes, NotADirectoryError. Resist Pirates!
+    os.exit(143)  # i.e. SIGTERM
+
+try:
+    with open(".si-scan") as file:
+        contents = file.read()
+        if contents.isnumeric():
+            last_scan = int(contents)
+except (FileNotFoundError, IsADirectoryError):
+    # Yes, IsADirectoryError. Who knows? Somebody may!
+    with open(".si-scan", "w") as file:
+        file.write(str(SCAN_START))
