@@ -14,6 +14,7 @@ file in the current directory.
 """
 
 import os
+import subprocess
 import sys
 
 SCAN_START = int(os.environ["SI_SCAN_START"])
@@ -22,14 +23,26 @@ try:
     os.chdir(sys.argv[1])
 except (FileNotFoundError, NotADirectoryError):
     # Yes, NotADirectoryError. Resist Pirates!
-    os.exit(143)  # i.e. SIGTERM
+    sys.exit(143)  # i.e. SIGTERM
 
 try:
     with open(".si-scan") as file:
         contents = file.read()
         if contents.isnumeric():
             last_scan = int(contents)
-except (FileNotFoundError, IsADirectoryError):
-    # Yes, IsADirectoryError. Who knows? Somebody may!
+            if last_scan > SCAN_START:
+                sys.exit()
     with open(".si-scan", "w") as file:
         file.write(str(SCAN_START))
+except (FileNotFoundError, IsADirectoryError):
+    with open(".si-scan", "w") as file:
+        file.write(str(SCAN_START))
+
+
+if ".si-service" in os.listdir():
+    os.execlp("si-service", "Lorem ipsum")
+
+for dir in [x for x in os.listdir() if os.path.isdir(x)]:
+    subprocess.run([sys.argv[0], dir])
+
+sys.exit()

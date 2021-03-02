@@ -3,4 +3,15 @@
 The program that supervises each service.
 
 s6-supervise equivalent
+
+NOTE: Only runs on the current directory.
 """
+
+import os
+import sys
+import subprocess
+
+if ".si-service" not in os.listdir():
+    sys.exit(143)  # i.e. SIGTERM
+
+subprocess.run("./run")
