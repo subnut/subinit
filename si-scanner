@@ -9,7 +9,7 @@ If .si-scan value is greater than SI_SCAN_START,
 i.e. This directory has been scanned _after_ this scanning was started,
 then exit cleanly (i.e. with exit code 0)
 
-exec() into `si-service` as-soon-as it finds a .si-service
+`echo $(pwd)` as-soon-as it finds a .si-service
 file in the current directory.
 """
 
@@ -40,7 +40,7 @@ except (FileNotFoundError, IsADirectoryError):
 
 
 if ".si-service" in os.listdir():
-    os.execlp("si-service", "Lorem ipsum")
+    print(os.getcwd())
 
 for dir in [x for x in os.listdir() if os.path.isdir(x)]:
     subprocess.run([sys.argv[0], dir])
